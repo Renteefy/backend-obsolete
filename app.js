@@ -3,10 +3,12 @@ const app = express();
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 var cors = require("cors");
-// socket
-// test69 + 4
+
 const loginRoute = require("./api/routes/users");
-mongoose.connect("mongodb://localhost:27017", { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect("mongodb://localhost:27017", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true }));
@@ -15,20 +17,24 @@ app.use(cors());
 
 app.use("/users", loginRoute);
 
-app.use((req, res, next) => {
-	const error = new Error("Not found");
-	error.status = 404;
-	res.status(404).json({ ramu: "kaka" });
-	next(error);
+// test route -  to check the if server is working
+app.get("/test", (req, res) => {
+  res.send({
+    message: "The server is on. just like your mom when she sees me 💦",
+  });
 });
 
-app.use((error, req, res, next) => {
-	res.status(error.status || 500);
-	res.json({
-		error: {
-			message: error.message,
-		},
-	});
+app.use((req, res, next) => {
+  res.sendStatus(404);
 });
+
+// app.use((error, req, res, next) => {
+//   res.status(error.status || 500);
+//   res.json({
+//     error: {
+//       message: error.message,
+//     },
+//   });
+// });
 
 module.exports = app;
