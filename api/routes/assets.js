@@ -50,12 +50,18 @@ router.post("/", checkAuth, upload.single("AssetImage"), (req, res, next) => {
 				id: result._id,
 			});
 		})
-		.catch((err) => console.log(err));
+		.catch((err) => {
+			console.log(err);
+			res.status(500).json({
+				error: err,
+			});
+		});
 });
 
 // Get all the assets in the database
 router.get("/", checkAuth, (req, res, next) => {
 	Asset.find()
+		.select("name description rate category picture username")
 		.exec()
 		.then((doc) => {
 			if (doc) {
@@ -73,6 +79,7 @@ router.get("/", checkAuth, (req, res, next) => {
 router.get("/asset/:assetId", checkAuth, (req, res, next) => {
 	const assetId = req.params.assetId;
 	Asset.findById(assetId)
+		.select("name description rate category picture username")
 		.exec()
 		.then((doc) => {
 			if (doc) {
@@ -91,6 +98,7 @@ router.get("/asset/:assetId", checkAuth, (req, res, next) => {
 router.get("/user/:username", checkAuth, (req, res, next) => {
 	const username = req.params.username;
 	Asset.find({ username: username })
+		.select("name description rate category picture username")
 		.exec()
 		.then((docs) => {
 			if (docs) {
