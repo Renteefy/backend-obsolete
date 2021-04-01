@@ -1,0 +1,38 @@
+** test **
+- url/text -> returns ""The server is on. just like your mom when she sees me 💦" on success
+
+** users **
+- url/users/signup => (POST)
+        {
+            username: val,
+            password: val
+        }
+    201 -> success
+        {
+            message: "User Created"
+        }
+    409 -> Failure
+        {
+            message: "user already exists"
+        }
+
+- url/users/login => (POST)
+        {
+            username: val,
+            password: val
+        }
+    200 -> success
+        {
+            message: "Auth successful",
+            token: token,
+        }
+    401 -> Failure
+        {
+            message: "Auth failed",
+        }
+
+- url/users/:username => (DELETE)
+    200 -> success
+        {
+            message: "User deleted"
+        }
