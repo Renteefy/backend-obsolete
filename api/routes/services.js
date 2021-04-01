@@ -51,12 +51,18 @@ router.post("/", checkAuth, upload.single("serviceImage"), (req, res, next) => {
 				id: result._id,
 			});
 		})
-		.catch((err) => console.log(err));
+		.catch((err) => {
+			console.log(err);
+			res.status(500).json({
+				error: err,
+			});
+		});
 });
 
 // Get all the services in the database
 router.get("/", checkAuth, (req, res, next) => {
 	Service.find()
+		.select("name description rate category picture duration username")
 		.exec()
 		.then((doc) => {
 			if (doc) {
@@ -74,6 +80,7 @@ router.get("/", checkAuth, (req, res, next) => {
 router.get("/service/:serviceId", checkAuth, (req, res, next) => {
 	const serviceId = req.params.serviceId;
 	Service.findById(serviceId)
+		.select("name description rate category picture duration username")
 		.exec()
 		.then((doc) => {
 			if (doc) {
@@ -91,6 +98,7 @@ router.get("/service/:serviceId", checkAuth, (req, res, next) => {
 router.get("/user/:username", checkAuth, (req, res, next) => {
 	const username = req.params.username;
 	Service.find({ username: username })
+		.select("name description rate category picture duration username")
 		.exec()
 		.then((docs) => {
 			if (docs) {

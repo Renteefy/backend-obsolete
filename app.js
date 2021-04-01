@@ -20,7 +20,7 @@ app.use(cors());
 
 app.use("/users", loginRoute);
 app.use("/assets", assetRoute);
-app.use("/service", serviceRoute);
+app.use("/services", serviceRoute);
 
 // test route -  to check the if server is working
 app.get("/test", (req, res) => {
