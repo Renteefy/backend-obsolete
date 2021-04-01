@@ -113,3 +113,64 @@ Note: Auth reequired on every route
         {
             message: "Asset deleted",
         }
+
+
+** services ** 
+Requires image, send data as multipart form data
+    {
+        serviceImage: Image,
+        name: val,
+        description: val,
+        rate: val,
+        category: val,
+        duration: val,
+    }
+    200 -> success
+        {
+            message: "POST in service",
+            id: serviceid,
+        }
+
+- url/services/service/:serviceId => (GET)
+    Get the service with service ID
+    200 -> success
+        {
+            _id: val,
+            name: val,
+            username: val,
+            picture: val, (file path, will static link here)
+            description: val,
+            rate: val,
+            category: val,
+            duration: val
+        }
+    404 -> Failure
+        {
+            message: "No Valid Entry Found"
+        }
+    
+- url/services/user/:username => (GET)
+    Get all the services posted by a particular user
+    @dj should the username here default to the logged in person ka username?
+    200 -> success
+        {
+            _id: val,
+            name: val,
+            username: val,
+            picture: val, (file path, will static link here)
+            description: val,
+            rate: val,
+            category: val,
+            duration: val
+        }
+    404 -> Failure
+        {
+            message: "No Valid Entry Found"
+        }
+
+- url/services/service/:serviceId => (DELETE)
+    // Delete the service whose serviceId is given
+    200 => success
+        {
+            message: "service deleted",
+        }
