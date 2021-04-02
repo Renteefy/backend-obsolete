@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+var sleep = require("sleep");
 
 const User = require("../models/user");
 
@@ -43,6 +44,7 @@ router.post("/signup", (req, res, next) => {
 });
 
 router.post("/login", (req, res, next) => {
+	// sleep.sleep(5);
 	User.find({ username: req.body.username })
 		.exec()
 		.then((user) => {

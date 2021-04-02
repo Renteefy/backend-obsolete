@@ -34,11 +34,12 @@ router.post("/", checkAuth, upload.single("AssetImage"), (req, res, next) => {
 	const userData = req.userData;
 	const asset = new Asset({
 		_id: mongoose.Types.ObjectId(),
-		name: req.body.name,
+		title: req.body.title,
 		username: userData.username,
 		picture: req.file.filename,
 		description: req.body.description,
-		rate: req.body.rate,
+		price: req.body.price,
+		interval: req.body.interval,
 		category: req.body.category,
 	});
 	asset
@@ -61,11 +62,23 @@ router.post("/", checkAuth, upload.single("AssetImage"), (req, res, next) => {
 // Get all the assets in the database
 router.get("/", checkAuth, (req, res, next) => {
 	Asset.find()
-		.select("name description rate category picture username")
+		.select("title picture price interval")
 		.exec()
-		.then((doc) => {
-			if (doc) {
-				res.status(200).json(doc);
+		.then((docs) => {
+			if (docs) {
+				const response = {
+					count: docs.length,
+					assets: docs.map((doc) => {
+						return {
+							title: doc.title,
+							price: doc.price,
+							assetID: doc._id,
+							interval: doc.interval,
+							url: doc.picture,
+						};
+					}),
+				};
+				res.status(200).json(response);
 			} else {
 				res.status(404).json({ message: "No Valid Entry Found" });
 			}
@@ -114,7 +127,7 @@ router.get("/user/:username", checkAuth, (req, res, next) => {
 
 // Delete the asset whose assetId is given
 router.delete("/asset/:assetId", checkAuth, (req, res, next) => {
-	Asset.remove({ assetId: req.params.assetId })
+	Asset.deleteOne({ _id: req.params.assetId })
 		.exec()
 		.then((result) => {
 			res.status(200).json({

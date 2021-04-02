@@ -2,11 +2,12 @@ const mongoose = require("mongoose");
 
 const assetSchema = mongoose.Schema({
 	_id: mongoose.Schema.Types.ObjectId,
-	name: String,
+	title: String,
 	username: String,
 	picture: String,
 	description: String,
-	rate: String,
+	price: String,
+	interval: String,
 	category: String,
 	date: { type: Date, default: Date.now },
 });
