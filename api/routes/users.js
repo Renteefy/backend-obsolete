@@ -16,6 +16,11 @@ router.post("/signup", (req, res, next) => {
 					message: "user already exists",
 				});
 			} else {
+				if (req.body.password == null) {
+					return res.status(400).json({
+						error: "Password missing",
+					});
+				}
 				bcrypt.hash(req.body.password, 10, (err, hash) => {
 					if (err) {
 						return res.status(500).json({

@@ -74,7 +74,7 @@ router.get("/", checkAuth, (req, res, next) => {
 							price: doc.price,
 							assetID: doc._id,
 							interval: doc.interval,
-							url: "static/" + doc.picture,
+							url: "/static/" + doc.picture,
 						};
 					}),
 				};
@@ -94,20 +94,15 @@ router.get("/asset/:assetId", checkAuth, (req, res, next) => {
 	Asset.findById(assetId)
 		.select("title description price interval picture username")
 		.exec()
-		.then((docs) => {
-			if (docs) {
+		.then((doc) => {
+			if (doc) {
 				const response = {
-					count: docs.length,
-					assets: docs.map((doc) => {
-						return {
-							title: doc.title,
-							price: doc.price,
-							assetID: doc._id,
-							interval: doc.interval,
-							description: doc.description,
-							url: "static/" + doc.picture,
-						};
-					}),
+					title: doc.title,
+					price: doc.price,
+					assetID: doc._id,
+					interval: doc.interval,
+					description: doc.description,
+					url: "/static/" + doc.picture,
 				};
 				res.status(200).json(response);
 			} else {
@@ -128,6 +123,7 @@ router.get("/user/:username", checkAuth, (req, res, next) => {
 		.exec()
 		.then((docs) => {
 			if (docs) {
+				console.log(docs);
 				const response = {
 					count: docs.length,
 					assets: docs.map((doc) => {
@@ -136,7 +132,7 @@ router.get("/user/:username", checkAuth, (req, res, next) => {
 							price: doc.price,
 							assetID: doc._id,
 							interval: doc.interval,
-							url: "static/" + doc.picture,
+							url: "/static/" + doc.picture,
 						};
 					}),
 				};
