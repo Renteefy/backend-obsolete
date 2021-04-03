@@ -88,6 +88,38 @@ router.get("/", checkAuth, (req, res, next) => {
 		});
 });
 
+router.get("/getsome/:skip/:limit", checkAuth, (req, res, next) => {
+	const skp = parseInt(req.params.skip);
+	const lmt = parseInt(req.params.limit);
+	Asset.find()
+		.skip(skp)
+		.limit(lmt)
+		.select("title picture price interval")
+		.exec()
+		.then((docs) => {
+			if (docs) {
+				const response = {
+					count: docs.length,
+					assets: docs.map((doc) => {
+						return {
+							title: doc.title,
+							price: doc.price,
+							assetID: doc._id,
+							interval: doc.interval,
+							url: "/static/" + doc.picture,
+						};
+					}),
+				};
+				res.status(200).json(response);
+			} else {
+				res.status(404).json({ message: "No Valid Entry Found" });
+			}
+		})
+		.catch((err) => {
+			console.log(err), res.status(500).json({ error: err });
+		});
+});
+
 // Get the asset with asset ID
 router.get("/asset/:assetId", checkAuth, (req, res, next) => {
 	const assetId = req.params.assetId;
