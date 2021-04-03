@@ -74,7 +74,7 @@ router.get("/", checkAuth, (req, res, next) => {
 							price: doc.price,
 							assetID: doc._id,
 							interval: doc.interval,
-							url: doc.picture,
+							url: "static/" + doc.picture,
 						};
 					}),
 				};
@@ -92,11 +92,24 @@ router.get("/", checkAuth, (req, res, next) => {
 router.get("/asset/:assetId", checkAuth, (req, res, next) => {
 	const assetId = req.params.assetId;
 	Asset.findById(assetId)
-		.select("name description rate category picture username")
+		.select("title description price interval picture username")
 		.exec()
-		.then((doc) => {
-			if (doc) {
-				res.status(200).json(doc);
+		.then((docs) => {
+			if (docs) {
+				const response = {
+					count: docs.length,
+					assets: docs.map((doc) => {
+						return {
+							title: doc.title,
+							price: doc.price,
+							assetID: doc._id,
+							interval: doc.interval,
+							description: doc.description,
+							url: "static/" + doc.picture,
+						};
+					}),
+				};
+				res.status(200).json(response);
 			} else {
 				res.status(404).json({ message: "No Valid Entry Found" });
 			}
@@ -111,11 +124,23 @@ router.get("/asset/:assetId", checkAuth, (req, res, next) => {
 router.get("/user/:username", checkAuth, (req, res, next) => {
 	const username = req.params.username;
 	Asset.find({ username: username })
-		.select("name description rate category picture username")
+		.select("title picture price interval")
 		.exec()
 		.then((docs) => {
 			if (docs) {
-				res.status(200).json(docs);
+				const response = {
+					count: docs.length,
+					assets: docs.map((doc) => {
+						return {
+							title: doc.title,
+							price: doc.price,
+							assetID: doc._id,
+							interval: doc.interval,
+							url: "static/" + doc.picture,
+						};
+					}),
+				};
+				res.status(200).json(response);
 			} else {
 				res.status(404).json({ message: "No Valid Entry Found" });
 			}
@@ -145,7 +170,5 @@ router.delete("/asset/:assetId", checkAuth, (req, res, next) => {
 module.exports = router;
 
 // Notes:
-// - I need to make the response to GET requests cleaner and include more metadeta, I'll do it later
-// - Error handling has to be done in a better way
 // - POST/DELETE requests need to return meaningful responses
 // - Which fields are required and which are optional needs to be discussed
