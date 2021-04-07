@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const checkAuth = require("../middleware/check-auth");
 const multer = require("multer");
+var sleep = require("sleep");
 
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
@@ -30,14 +31,20 @@ const upload = multer({
 const Asset = require("../models/asset");
 
 // Add a new asset
-router.post("/", checkAuth, upload.single("AssetImage"), (req, res, next) => {
+router.post("/", checkAuth, upload.fields([{ name: "AssetImage", maxCount: 1 }]), (req, res, next) => {
 	const userData = req.userData;
+	let file_name;
+	if (req.files["AssetImage"] !== undefined) {
+		file_name = req.files["AssetImage"][0].filename;
+	} else {
+		file_name = null;
+	}
 	const asset = new Asset({
 		_id: mongoose.Types.ObjectId(),
 		title: req.body.title,
 		username: userData.username,
-		picture: req.file.filename,
 		description: req.body.description,
+		picture: file_name,
 		price: req.body.price,
 		interval: req.body.interval,
 		category: req.body.category,
@@ -88,7 +95,8 @@ router.get("/", checkAuth, (req, res, next) => {
 		});
 });
 
-router.get("/getsome/:skip/:limit", checkAuth, (req, res, next) => {
+router.get("/getsome/:skip/:limit/", checkAuth, (req, res, next) => {
+	// sleep.sleep(5);
 	const skp = parseInt(req.params.skip);
 	const lmt = parseInt(req.params.limit);
 	Asset.find()
