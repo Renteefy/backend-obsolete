@@ -142,6 +142,7 @@ router.get("/asset/:assetId", checkAuth, (req, res, next) => {
 					assetID: doc._id,
 					interval: doc.interval,
 					description: doc.description,
+					username: doc.username,
 					url: "/static/" + doc.picture,
 				};
 				res.status(200).json(response);

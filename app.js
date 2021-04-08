@@ -7,6 +7,7 @@ var cors = require("cors");
 const loginRoute = require("./api/routes/users");
 const assetRoute = require("./api/routes/assets");
 const serviceRoute = require("./api/routes/services");
+const notificationRoute = require("./api/routes/notifications");
 
 mongoose.connect("mongodb://localhost:27017", {
 	useNewUrlParser: true,
@@ -22,6 +23,7 @@ app.use("/static", express.static("uploads"));
 app.use("/users", loginRoute);
 app.use("/assets", assetRoute);
 app.use("/services", serviceRoute);
+app.use("/notifications", notificationRoute);
 
 // test route -  to check the if server is working
 app.get("/test", (req, res) => {
