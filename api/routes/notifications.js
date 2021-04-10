@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const checkAuth = require("../middleware/check-auth");
 
 const Notification = require("../models/notification");
+const user = require("../models/user");
 
 // Add a new notification
 router.post("/", checkAuth, (req, res, next) => {
@@ -86,10 +87,10 @@ router.get("/notification/:notificationId", checkAuth, (req, res, next) => {
 		});
 });
 
-// Get all the notifications posted by a particular user
+// Get all the notifications where the owner is the logged in user
 router.get("/user/", checkAuth, (req, res, next) => {
 	const username = req.userData.username;
-	Notification.find({ rentee: username })
+	Notification.find({ $or: [{ owner: username }, { rentee: username }] })
 		.select("title status owner rentee")
 		.exec()
 		.then((docs) => {
@@ -137,6 +138,33 @@ router.delete("/notification/:notificationId", checkAuth, (req, res, next) => {
 			res.status(500).json({
 				error: err,
 			});
+		});
+});
+
+// {
+//     "changes":[
+//         {
+//             "propName": "status",
+//             "value": "Request Raised"
+//         }
+//     ]
+// }
+router.patch("/notification/:notificationId", checkAuth, (req, res, next) => {
+	const id = req.params.notificationId;
+	const updateOps = {};
+	for (const ops of req.body.changes) {
+		updateOps[ops.propName] = ops.value;
+	}
+	console.log(updateOps);
+	Notification.updateOne({ _id: id }, { $set: updateOps })
+		.exec()
+		.then((result) => {
+			console.log(result);
+			res.status(200).json(result);
+		})
+		.catch((err) => {
+			console.log(err);
+			res.status(500).json({ error: err });
 		});
 });
 
