@@ -29,6 +29,9 @@ const upload = multer({
 });
 
 const Asset = require("../models/asset");
+const Notification = require("../models/notification");
+const user = require("../models/user");
+const asset = require("../models/asset");
 
 // Add a new asset
 router.post("/", checkAuth, upload.fields([{ name: "AssetImage", maxCount: 1 }]), (req, res, next) => {
@@ -42,7 +45,7 @@ router.post("/", checkAuth, upload.fields([{ name: "AssetImage", maxCount: 1 }])
 	const asset = new Asset({
 		_id: mongoose.Types.ObjectId(),
 		title: req.body.title,
-		username: userData.username,
+		owner: userData.username,
 		description: req.body.description,
 		picture: file_name,
 		price: req.body.price,
@@ -131,21 +134,26 @@ router.get("/getsome/:skip/:limit/", checkAuth, (req, res, next) => {
 // Get the asset with asset ID
 router.get("/asset/:assetId", checkAuth, (req, res, next) => {
 	const assetId = req.params.assetId;
+	const username = req.userData.username;
 	Asset.findById(assetId)
-		.select("title description price interval picture username")
+		.select("title description price interval picture owner")
 		.exec()
 		.then((doc) => {
 			if (doc) {
-				const response = {
+				const assetResponse = {
 					title: doc.title,
 					price: doc.price,
 					assetID: doc._id,
 					interval: doc.interval,
 					description: doc.description,
-					username: doc.username,
+					owner: doc.owner,
 					url: "/static/" + doc.picture,
 				};
-				res.status(200).json(response);
+				let alreadySentQuery = findAlreadySent(username, assetResponse.title);
+				alreadySentQuery.exec((err, doc) => {
+					if (err) return err;
+					else res.status(200).json({ assetResponse: assetResponse, notifiResponse: doc });
+				});
 			} else {
 				res.status(404).json({ message: "No Valid Entry Found" });
 			}
@@ -157,9 +165,9 @@ router.get("/asset/:assetId", checkAuth, (req, res, next) => {
 
 // Get all the assets posted by a particular user
 // @dj should the username here default to the logged in person ka username?
-router.get("/user/:username", checkAuth, (req, res, next) => {
-	const username = req.params.username;
-	Asset.find({ username: username })
+router.get("/user/:owner", checkAuth, (req, res, next) => {
+	const owner = req.params.owner;
+	Asset.find({ owner: owner })
 		.select("title picture price interval")
 		.exec()
 		.then((docs) => {
@@ -204,8 +212,11 @@ router.delete("/asset/:assetId", checkAuth, (req, res, next) => {
 		});
 });
 
-module.exports = router;
+function findAlreadySent(username, assetTitle) {
+	console.log(username, assetTitle);
+	let query = Notification.find({ rentee: username, title: assetTitle }).select("title status owner rentee assetID");
 
-// Notes:
-// - POST/DELETE requests need to return meaningful responses
-// - Which fields are required and which are optional needs to be discussed
+	return query;
+}
+
+module.exports = router;
