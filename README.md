@@ -1,3 +1,4 @@
 # backend
 Backend to renteefy
-altering test 4
+To popDB with fake assets run
+` npm run popDB `
