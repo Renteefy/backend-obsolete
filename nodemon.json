@@ -1,5 +1,7 @@
 {
 	"env": {
-		"MONGO_PW": "3"
+		"MONGO_PW": "3",
+		"URL": "https://api.renteefy.ga",
+		"PASS": "ramukaka"
 	}
 }
