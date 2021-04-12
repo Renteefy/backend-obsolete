@@ -1,15 +1,15 @@
 const mongoose = require("mongoose");
 
 const serviceSchema = mongoose.Schema({
-	_id: mongoose.Schema.Types.ObjectId,
-	name: String,
-	username: String,
-	picture: String,
-	description: String,
-	rate: String,
-	category: String,
-	duration: String,
-	date: { type: Date, default: Date.now },
+  _id: mongoose.Schema.Types.ObjectId,
+  name: String,
+  username: String,
+  picture: String,
+  description: String,
+  rate: String,
+  category: String,
+  duration: String,
+  date: { type: Date, default: Date.now },
 });
 
 module.exports = mongoose.model("Service", serviceSchema);
