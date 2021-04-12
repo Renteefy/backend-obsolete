@@ -31,7 +31,6 @@ const upload = multer({
 const Asset = require("../models/asset");
 const Notification = require("../models/notification");
 const user = require("../models/user");
-const asset = require("../models/asset");
 
 // Add a new asset
 router.post("/", checkAuth, upload.fields([{ name: "AssetImage", maxCount: 1 }]), (req, res, next) => {

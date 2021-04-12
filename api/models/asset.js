@@ -9,7 +9,11 @@ const assetSchema = mongoose.Schema({
   price: String,
   interval: String,
   category: String,
-  renter: String,
+  renter: {
+    renterUsername: { type: String, default: null },
+    startDate: String,
+    endDate: String,
+  },
   waitingList: [String],
   date: { type: Date, default: Date.now },
 });
