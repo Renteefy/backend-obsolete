@@ -104,7 +104,7 @@ router.get("/getsome/:skip/:limit/", checkAuth, (req, res, next) => {
 	Asset.find()
 		.skip(skp)
 		.limit(lmt)
-		.select("title picture price interval")
+		.select("title picture price interval date")
 		.exec()
 		.then((docs) => {
 			if (docs) {
@@ -114,6 +114,7 @@ router.get("/getsome/:skip/:limit/", checkAuth, (req, res, next) => {
 						return {
 							title: doc.title,
 							price: doc.price,
+							date: doc.date,
 							assetID: doc._id,
 							interval: doc.interval,
 							url: "/static/" + doc.picture,
