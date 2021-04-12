@@ -1,15 +1,17 @@
 const mongoose = require("mongoose");
 
 const assetSchema = mongoose.Schema({
-	_id: mongoose.Schema.Types.ObjectId,
-	title: String,
-	owner: String,
-	picture: String,
-	description: String,
-	price: String,
-	interval: String,
-	category: String,
-	date: { type: Date, default: Date.now },
+  _id: mongoose.Schema.Types.ObjectId,
+  title: String,
+  owner: String,
+  picture: String,
+  description: String,
+  price: String,
+  interval: String,
+  category: String,
+  renter: String,
+  waitingList: [String],
+  date: { type: Date, default: Date.now },
 });
 
 module.exports = mongoose.model("Asset", assetSchema);
