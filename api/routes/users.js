@@ -75,6 +75,7 @@ router.post("/login", (req, res, next) => {
 						expiresIn: "24h",
 					}
 				);
+				console.log(user[0].username + " logged in");
 				return res.status(200).json({
 					message: "Auth successful",
 					token: token,
