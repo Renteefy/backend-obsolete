@@ -21,13 +21,13 @@ async function resolveCertificates() {
   });
 }
 
-if (process.env.NODE_ENV == "prod") {
+if (process.env.NODE_ENV == "dev") {
+  resolveCertificates();
+} else {
   const server = http.createServer(app);
   console.log(process.env.NODE_ENV);
   server.listen(port, (err) => {
     if (err) console.error(err);
     console.log("Listening on port:", port);
   });
-} else {
-  resolveCertificates();
 }
