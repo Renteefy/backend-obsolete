@@ -136,7 +136,7 @@ router.get("/asset/:assetId", checkAuth, (req, res, next) => {
 	const assetId = req.params.assetId;
 	const username = req.userData.username;
 	Asset.findById(assetId)
-		.select("title description price interval picture owner")
+		.select("title description price interval picture owner category")
 		.exec()
 		.then((doc) => {
 			if (doc) {
@@ -145,6 +145,7 @@ router.get("/asset/:assetId", checkAuth, (req, res, next) => {
 					price: doc.price,
 					assetID: doc._id,
 					interval: doc.interval,
+					category: doc.category,
 					description: doc.description,
 					owner: doc.owner,
 					url: "/static/" + doc.picture,
@@ -209,6 +210,24 @@ router.delete("/asset/:assetId", checkAuth, (req, res, next) => {
 			res.status(500).json({
 				error: err,
 			});
+		});
+});
+
+router.patch("/asset/:assetId", checkAuth, upload.fields([{ name: "AssetImage", maxCount: 1 }]), (req, res, next) => {
+	const id = req.params.assetId;
+	if (req.files["AssetImage"] !== undefined) {
+		file_name = req.files["AssetImage"][0].filename;
+		req.body.picture = file_name;
+	}
+	Asset.updateOne({ _id: id }, { $set: req.body })
+		.exec()
+		.then((result) => {
+			console.log(result);
+			res.status(200).json(result);
+		})
+		.catch((err) => {
+			console.log(err);
+			res.status(500).json({ error: err });
 		});
 });
 
