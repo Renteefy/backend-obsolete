@@ -169,7 +169,7 @@ router.get("/asset/:assetId", checkAuth, (req, res, next) => {
 router.get("/user/:owner", checkAuth, (req, res, next) => {
 	const owner = req.params.owner;
 	Asset.find({ owner: owner })
-		.select("title picture price interval")
+		.select("title picture price interval description owner renter")
 		.exec()
 		.then((docs) => {
 			if (docs) {
@@ -182,6 +182,9 @@ router.get("/user/:owner", checkAuth, (req, res, next) => {
 							price: doc.price,
 							assetID: doc._id,
 							interval: doc.interval,
+							description: doc.description,
+							owner: doc.owner,
+							renter: doc.renter,
 							url: "/static/" + doc.picture,
 						};
 					}),
