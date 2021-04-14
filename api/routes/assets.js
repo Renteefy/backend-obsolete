@@ -174,6 +174,7 @@ router.get("/asset/:assetId", checkAuth, (req, res, next) => {
 // Get all the assets posted by a particular user
 router.get("/user/:owner", checkAuth, (req, res, next) => {
 	const owner = req.params.owner;
+	const userData = req.userData;
 
 	// To check that the logged in user's username is same as the "owner" field sent in the request body
 	if (userData.username !== owner) {
@@ -236,7 +237,9 @@ router.patch("/asset/:assetId", checkAuth, upload.fields([{ name: "AssetImage", 
 	}
 	const reqParams = ["title", "owner", "description", "price", "interval", "category"];
 	for (const p in req.body) {
-		if (p in reqParams == false) {
+		console.log(p in reqParams);
+		if (p in reqParams === false) {
+			console.log(p);
 			return res.status(400).json({ message: "Extra parameters provided" });
 		}
 	}
@@ -279,7 +282,7 @@ function findAlreadySent(username, assetTitle) {
 // This route returns the list of assets where the logged in user is the renter
 router.get("/userRented/", checkAuth, (req, res, next) => {
 	const username = req.userData.username;
-	Asset.find({ renter: { renterUsername: username } })
+	Asset.find({ "renter.renterUsername": username })
 		.select("title picture price interval description owner renter")
 		.exec()
 		.then((docs) => {
