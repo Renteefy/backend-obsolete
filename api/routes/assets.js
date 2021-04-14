@@ -236,9 +236,8 @@ router.patch("/asset/:assetId", checkAuth, upload.fields([{ name: "AssetImage", 
 		req.body.picture = file_name;
 	}
 	const reqParams = ["title", "owner", "description", "price", "interval", "category"];
-	for (const p in req.body) {
-		console.log(p in reqParams);
-		if (p in reqParams === false) {
+	for (const p of Object.keys(req.body)) {
+		if (!reqParams.includes(p)) {
 			console.log(p);
 			return res.status(400).json({ message: "Extra parameters provided" });
 		}
