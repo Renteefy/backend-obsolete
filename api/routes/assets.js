@@ -173,7 +173,6 @@ router.get("/user/:owner", checkAuth, (req, res, next) => {
 		.exec()
 		.then((docs) => {
 			if (docs) {
-				console.log(docs);
 				const response = {
 					count: docs.length,
 					assets: docs.map((doc) => {

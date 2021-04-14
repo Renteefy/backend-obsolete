@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 var sleep = require("sleep");
+const checkAuth = require("../middleware/check-auth");
+const multer = require("multer");
 
 const User = require("../models/user");
 
@@ -80,6 +82,7 @@ router.post("/login", (req, res, next) => {
 					message: "Auth successful",
 					token: token,
 					username: user[0].username,
+					picture: "/static/" + user[0].picture,
 				});
 			}
 			// return res.status(401).json({
@@ -107,6 +110,71 @@ router.delete("/:username", (req, res, next) => {
 			res.status(500).json({
 				error: err,
 			});
+		});
+});
+
+const storage = multer.diskStorage({
+	destination: function (req, file, cb) {
+		cb(null, "./uploads/");
+	},
+	filename: function (req, file, cb) {
+		cb(null, new Date().toISOString() + file.originalname);
+	},
+});
+
+const fileFilter = (req, file, cb) => {
+	if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+		cb(null, true);
+	} else {
+		cb(null, false);
+	}
+};
+
+const upload = multer({
+	storage: storage,
+	limits: { fileSize: 1024 * 1024 * 5 },
+	// fileFilter: fileFilter,
+});
+
+router.patch("/user", checkAuth, upload.fields([{ name: "UserImage", maxCount: 1 }]), (req, res, next) => {
+	if (req.files["UserImage"] !== undefined) {
+		file_name = req.files["UserImage"][0].filename;
+		req.body.picture = file_name;
+	}
+	User.updateOne({ username: req.userData.username }, { $set: req.body })
+		.exec()
+		.then((result) => {
+			console.log(result);
+			res.status(200).json(result);
+		})
+		.catch((err) => {
+			console.log(err);
+			res.status(500).json({ error: err });
+		});
+});
+
+router.get("/user", checkAuth, (req, res, next) => {
+	User.findOne({ username: req.userData.username })
+		.select("username email picture firstName lastName date")
+		.exec()
+		.then((doc) => {
+			if (doc) {
+				const userDetails = {
+					username: doc.username,
+					email: doc.email,
+					userID: doc._id,
+					picture: "/static/" + doc.picture,
+					firstName: doc.firstName,
+					lastName: doc.lastName,
+					date: doc.date,
+				};
+				res.status(200).json(userDetails);
+			} else {
+				res.status(404).json({ message: "No Valid Entry Found" });
+			}
+		})
+		.catch((err) => {
+			console.log(err), res.status(500).json({ error: err });
 		});
 });
 
