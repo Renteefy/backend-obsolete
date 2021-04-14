@@ -18,4 +18,4 @@ jobs:
           cd backend
           git checkout 0.0
           git pull
-          
+          pm2 restart backendServer
