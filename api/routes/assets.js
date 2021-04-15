@@ -30,6 +30,7 @@ const upload = multer({
 const Asset = require("../models/asset");
 const Notification = require("../models/notification");
 const user = require("../models/user");
+const { response } = require("express");
 
 // Add a new asset
 router.post("/", checkAuth, upload.fields([{ name: "AssetImage", maxCount: 1 }]), (req, res, next) => {
@@ -231,15 +232,16 @@ router.delete("/asset/:assetId", checkAuth, (req, res, next) => {
 // This route basically edits the entire asset except the "renter" field
 router.patch("/asset/:assetId", checkAuth, upload.fields([{ name: "AssetImage", maxCount: 1 }]), (req, res, next) => {
 	const id = req.params.assetId;
-
+	const reqParams = ["title", "owner", "description", "price", "interval", "category"];
 	if (req.files["AssetImage"] !== undefined) {
 		file_name = req.files["AssetImage"][0].filename;
 		req.body.picture = file_name;
+		reqParams.push("picture");
 	}
-	const reqParams = ["title", "owner", "description", "price", "interval", "category"];
+
 	for (const p of Object.keys(req.body)) {
 		if (!reqParams.includes(p)) {
-			console.log(p);
+			console.log(p, "this is the extra parameter");
 			return res.status(400).json({ message: "Extra parameters provided" });
 		}
 	}
