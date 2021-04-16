@@ -29,11 +29,10 @@ const upload = multer({
 
 const Asset = require("../models/asset");
 const Notification = require("../models/notification");
-const user = require("../models/user");
 const { response } = require("express");
 
 // Add a new asset
-router.post("/", checkAuth, upload.fields([{ name: "AssetImage", maxCount: 1 }]), (req, res, next) => {
+router.post("/", checkAuth, upload.fields([{ name: "assetImage", maxCount: 1 }]), (req, res, next) => {
 	const userData = req.userData;
 
 	// To check that the logged in user's username is same as the "owner" field sent in the request body
@@ -42,8 +41,8 @@ router.post("/", checkAuth, upload.fields([{ name: "AssetImage", maxCount: 1 }])
 	}
 
 	let file_name;
-	if (req.files["AssetImage"] !== undefined) {
-		file_name = req.files["AssetImage"][0].filename;
+	if (req.files["assetImage"] !== undefined) {
+		file_name = req.files["assetImage"][0].filename;
 	} else {
 		file_name = null;
 	}
@@ -86,11 +85,11 @@ router.get("/", checkAuth, (req, res, next) => {
 			if (docs) {
 				const response = {
 					count: docs.length,
-					assets: docs.map((doc) => {
+					items: docs.map((doc) => {
 						return {
 							title: doc.title,
 							price: doc.price,
-							assetID: doc._id,
+							id: doc._id,
 							interval: doc.interval,
 							url: "/static/" + doc.picture,
 						};
@@ -118,12 +117,12 @@ router.get("/getsome/:skip/:limit/", checkAuth, (req, res, next) => {
 			if (docs) {
 				const response = {
 					count: docs.length,
-					assets: docs.map((doc) => {
+					items: docs.map((doc) => {
 						return {
 							title: doc.title,
 							price: doc.price,
 							date: doc.date,
-							assetID: doc._id,
+							id: doc._id,
 							interval: doc.interval,
 							url: "/static/" + doc.picture,
 						};
@@ -151,7 +150,7 @@ router.get("/asset/:assetId", checkAuth, (req, res, next) => {
 				const assetResponse = {
 					title: doc.title,
 					price: doc.price,
-					assetID: doc._id,
+					id: doc._id,
 					interval: doc.interval,
 					category: doc.category,
 					description: doc.description,
@@ -161,7 +160,7 @@ router.get("/asset/:assetId", checkAuth, (req, res, next) => {
 				let alreadySentQuery = findAlreadySent(username, assetResponse.title);
 				alreadySentQuery.exec((err, doc) => {
 					if (err) return err;
-					else res.status(200).json({ assetResponse: assetResponse, notifiResponse: doc });
+					else res.status(200).json({ itemResponse: assetResponse, notifiResponse: doc });
 				});
 			} else {
 				res.status(404).json({ message: "No Valid Entry Found" });
@@ -189,11 +188,11 @@ router.get("/user/:owner", checkAuth, (req, res, next) => {
 			if (docs) {
 				const response = {
 					count: docs.length,
-					assets: docs.map((doc) => {
+					items: docs.map((doc) => {
 						return {
 							title: doc.title,
 							price: doc.price,
-							assetID: doc._id,
+							id: doc._id,
 							interval: doc.interval,
 							description: doc.description,
 							owner: doc.owner,
@@ -230,11 +229,11 @@ router.delete("/asset/:assetId", checkAuth, (req, res, next) => {
 });
 
 // This route basically edits the entire asset except the "renter" field
-router.patch("/asset/:assetId", checkAuth, upload.fields([{ name: "AssetImage", maxCount: 1 }]), (req, res, next) => {
+router.patch("/asset/:assetId", checkAuth, upload.fields([{ name: "assetImage", maxCount: 1 }]), (req, res, next) => {
 	const id = req.params.assetId;
 	const reqParams = ["title", "owner", "description", "price", "interval", "category"];
-	if (req.files["AssetImage"] !== undefined) {
-		file_name = req.files["AssetImage"][0].filename;
+	if (req.files["assetImage"] !== undefined) {
+		file_name = req.files["assetImage"][0].filename;
 		req.body.picture = file_name;
 		reqParams.push("picture");
 	}
@@ -291,11 +290,11 @@ router.get("/userRented/", checkAuth, (req, res, next) => {
 			if (docs) {
 				const response = {
 					count: docs.length,
-					assets: docs.map((doc) => {
+					items: docs.map((doc) => {
 						return {
 							title: doc.title,
 							price: doc.price,
-							assetID: doc._id,
+							id: doc._id,
 							interval: doc.interval,
 							description: doc.description,
 							owner: doc.owner,

@@ -1,4 +1,5 @@
 const Asset = require("../models/asset");
+const Asset = require("../models/service");
 const mongoose = require("mongoose");
 mongoose.connect("mongodb://localhost:27017/test", {
 	useNewUrlParser: true,
@@ -59,12 +60,77 @@ const headphones = {
 	// picture: "2021-04-12T07:28:50.837Z2021-04-03T10:02:12.932Z72425.jpg",
 	picture: "2021-04-12T07:29:12.676Z2021-04-03T10:02:12.932Z72425.jpg",
 };
-const arr = [iphone, macbook, bike, piano, headphones];
+
+const coding = {
+	_id: mongoose.Types.ObjectId(),
+	title: "Coding Lessons",
+	description: "This is the description of Coding",
+	price: "699",
+	owner: "tester1",
+	interval: "per day",
+	category: "Teching",
+	// picture: "2021-04-12T07:28:50.837Z2021-04-03T10:02:12.932Z72425.jpg",
+	picture: "2021-04-16T02:25:05.607ZCoding Teacher.jpg",
+};
+
+const driving = {
+	_id: mongoose.Types.ObjectId(),
+	title: "Driving Lessons",
+	description: "This is the description of driving",
+	price: "599",
+	owner: "tester1",
+	interval: "per day",
+	category: "Teching",
+	// picture: "2021-04-12T07:28:50.837Z2021-04-03T10:02:12.932Z72425.jpg",
+	picture: "2021-04-16T02:26:28.738Zteens-driving.jpg",
+};
+
+const plumber = {
+	_id: mongoose.Types.ObjectId(),
+	title: "Plumber",
+	description: "This is the description of Plumber",
+	price: "499",
+	owner: "tester1",
+	interval: "per day",
+	category: "Teching",
+	// picture: "2021-04-12T07:28:50.837Z2021-04-03T10:02:12.932Z72425.jpg",
+	picture: "2021-04-16T02:27:32.374ZPlumbing.jpg",
+};
+
+const driver = {
+	_id: mongoose.Types.ObjectId(),
+	title: "Driver",
+	description: "This is the description of Driver",
+	price: "299",
+	owner: "tester1",
+	interval: "per day",
+	category: "Teching",
+	// picture: "2021-04-12T07:28:50.837Z2021-04-03T10:02:12.932Z72425.jpg",
+	picture: "2021-04-16T02:40:23.793Zcab-driver-leaning-out-of-his-yellow-cab-1-1038x576.jpg",
+};
+
+const designing = {
+	_id: mongoose.Types.ObjectId(),
+	title: "Interior Designing",
+	description: "This is the description of Interior Designing",
+	price: "299",
+	owner: "tester2",
+	interval: "per hour",
+	category: "Teching",
+	// picture: "2021-04-12T07:28:50.837Z2021-04-03T10:02:12.932Z72425.jpg",
+	picture: "2021-04-16T02:46:35.046Z1*TqywcJgkYygfkt-C50adAQ.png",
+};
+
+const assetArr = [iphone, macbook, bike, piano, headphones];
+const serviceArr = [coding, driver, driving, plumber, designing];
 async function popDb() {
-	//console.log(arr);
-	arr.map((item) => {
-		const asset = new Asset(item);
-		asset.save();
+	// assetArr.map((item) => {
+	// 	const asset = new Asset(item);
+	// 	asset.save();
+	// });
+	serviceArr.map((item) => {
+		const service = new Service(item);
+		service.save();
 	});
 }
 
