@@ -68,7 +68,7 @@ const coding = {
 	price: "699",
 	owner: "tester1",
 	interval: "per day",
-	category: "Teching",
+	category: "Teaching and Education",
 	// picture: "2021-04-12T07:28:50.837Z2021-04-03T10:02:12.932Z72425.jpg",
 	picture: "2021-04-16T02:25:05.607ZCoding Teacher.jpg",
 };
@@ -80,7 +80,7 @@ const driving = {
 	price: "599",
 	owner: "tester1",
 	interval: "per day",
-	category: "Teching",
+	category: "Teaching and Education",
 	// picture: "2021-04-12T07:28:50.837Z2021-04-03T10:02:12.932Z72425.jpg",
 	picture: "2021-04-16T02:26:28.738Zteens-driving.jpg",
 };
@@ -92,7 +92,7 @@ const plumber = {
 	price: "499",
 	owner: "tester1",
 	interval: "per day",
-	category: "Teching",
+	category: "Construction and Engineering",
 	// picture: "2021-04-12T07:28:50.837Z2021-04-03T10:02:12.932Z72425.jpg",
 	picture: "2021-04-16T02:27:32.374ZPlumbing.jpg",
 };
@@ -104,7 +104,7 @@ const driver = {
 	price: "299",
 	owner: "tester1",
 	interval: "per day",
-	category: "Teching",
+	category: "Logistics and Transportation",
 	// picture: "2021-04-12T07:28:50.837Z2021-04-03T10:02:12.932Z72425.jpg",
 	picture: "2021-04-16T02:40:23.793Zcab-driver-leaning-out-of-his-yellow-cab-1-1038x576.jpg",
 };
@@ -116,7 +116,7 @@ const designing = {
 	price: "299",
 	owner: "tester2",
 	interval: "per hour",
-	category: "Teching",
+	category: "Business and Finance",
 	// picture: "2021-04-12T07:28:50.837Z2021-04-03T10:02:12.932Z72425.jpg",
 	picture: "2021-04-16T02:46:35.046Z1*TqywcJgkYygfkt-C50adAQ.png",
 };
@@ -124,10 +124,10 @@ const designing = {
 const assetArr = [iphone, macbook, bike, piano, headphones];
 const serviceArr = [coding, driver, driving, plumber, designing];
 async function popDb() {
-	// assetArr.map((item) => {
-	// 	const asset = new Asset(item);
-	// 	asset.save();
-	// });
+	assetArr.map((item) => {
+		const asset = new Asset(item);
+		asset.save();
+	});
 	serviceArr.map((item) => {
 		const service = new Service(item);
 		service.save();

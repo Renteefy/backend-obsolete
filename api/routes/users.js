@@ -8,45 +8,50 @@ const checkAuth = require("../middleware/check-auth");
 const multer = require("multer");
 
 const User = require("../models/user");
+const Invite = require("../models/invite");
 
 router.post("/signup", (req, res, next) => {
-	User.find({ username: req.body.username })
+	User.find({ email: req.body.email })
 		.exec()
 		.then((user) => {
 			if (user.length >= 1) {
 				return res.status(409).json({
-					message: "user already exists",
-				});
-			} else {
-				if (req.body.password == null) {
-					return res.status(400).json({
-						error: "Password missing",
-					});
-				}
-				bcrypt.hash(req.body.password, 10, (err, hash) => {
-					if (err) {
-						return res.status(500).json({
-							error: err,
-						});
-					} else {
-						const user = new User({
-							_id: mongoose.Types.ObjectId(),
-							username: req.body.username,
-							password: hash,
-						});
-						user.save()
-							.then((result) => {
-								res.status(201).json({
-									message: "User Created",
-								});
-							})
-							.catch((err) => {
-								console.log(err);
-								res.status(500).json(err);
-							});
-					}
+					message: "Email already exists",
 				});
 			}
+			// } else {
+			// if (req.body.password == null) {
+			// 	return res.status(400).json({
+			// 		error: "Password missing",
+			// 	});
+			// }
+			// bcrypt.hash(req.body.password, 10, (err, hash) => {
+			// 	if (err) {
+			// 		return res.status(500).json({
+			// 			error: err,
+			// 		});
+			// }
+			else {
+				const user = new User({
+					_id: mongoose.Types.ObjectId(),
+					email: req.body.email,
+					// password: hash,
+				});
+				user.save()
+					.then((result) => {
+						res.status(201).json({
+							message: "User Created",
+						});
+					})
+					.catch((err) => {
+						console.log(err);
+						res.status(500).json(err);
+					});
+			}
+		})
+		.catch((err) => {
+			console.log(err);
+			res.status(500).json(err);
 		});
 });
 
@@ -70,6 +75,7 @@ router.post("/login", (req, res, next) => {
 				const token = jwt.sign(
 					{
 						username: user[0].username,
+						email: user[0].email,
 						userId: user[0]._id,
 					},
 					"secret",
@@ -175,6 +181,63 @@ router.get("/user", checkAuth, (req, res, next) => {
 		})
 		.catch((err) => {
 			console.log(err), res.status(500).json({ error: err });
+		});
+});
+
+router.post("/sendInvite", checkAuth, (req, res, next) => {
+	const userEmail = req.userData.email;
+	let userID;
+	User.findOne({ email: userEmail })
+		.select("invitesNum")
+		.exec()
+		.then((doc) => {
+			userID = doc._id;
+			if (doc.invitesNum === 0) {
+				return res.status(404).json({ message: "Out of invites" });
+			} else {
+				const email = req.body.email;
+				// "send email" code here
+				User.find({ email: email })
+					.exec()
+					.then((user) => {
+						if (user.length >= 1) {
+							return res.status(409).json({
+								message: "Email already exists",
+							});
+						} else {
+							const newUser = new User({ _id: mongoose.Types.ObjectId(), email: email });
+							newUser
+								.save()
+								.then((userDocs) => {
+									const inviteObj = new Invite({ _id: mongoose.Types.ObjectId(), invitedBy: userEmail, email: email });
+									inviteObj
+										.save()
+										.then((inviteDocs) => {
+											User.updateOne({ _id: userID }, { $inc: { invitesNum: -1 } }).exec();
+											res.status(200).json({ message: "Invite sent successfully" });
+										})
+										.catch((err) => {
+											console.log(err);
+											res.status(500).json({
+												error: err,
+											});
+										});
+								})
+								.catch((err) => {
+									console.log(err);
+									res.status(500).json({
+										error: err,
+									});
+								});
+						}
+					});
+			}
+		})
+		.catch((err) => {
+			console.log(err);
+			res.status(500).json({
+				error: err,
+			});
 		});
 });
 
