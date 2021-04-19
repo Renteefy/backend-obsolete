@@ -7,8 +7,8 @@ mongoose.connect("mongodb://localhost:27017/test", {
 	useUnifiedTopology: true,
 });
 
-const tester1 = { email: "tester1@gmail.com" };
-const tester2 = { email: "tester2@gmail.com" };
+const tester1 = { _id: mongoose.Types.ObjectId(), email: "tester1@gmail.com" };
+const tester2 = { _id: mongoose.Types.ObjectId(), email: "tester2@gmail.com" };
 const iphone = {
 	_id: mongoose.Types.ObjectId(),
 	title: "iPhone",
