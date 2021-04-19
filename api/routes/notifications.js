@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const checkAuth = require("../middleware/check-auth");
 
 const Notification = require("../models/notification");
-const user = require("../models/user");
+const User = require("../models/user");
 
 // Add a new notification
 router.post("/", checkAuth, (req, res, next) => {
@@ -12,9 +12,10 @@ router.post("/", checkAuth, (req, res, next) => {
 	const notification = new Notification({
 		_id: mongoose.Types.ObjectId(),
 		title: req.body.title,
-		assetID: req.body.assetID,
+		itemID: req.body.itemID,
 		status: req.body.status,
 		owner: req.body.owner,
+		itemType: req.body.itemType,
 		rentee: userData.username,
 	});
 	notification
@@ -37,7 +38,7 @@ router.post("/", checkAuth, (req, res, next) => {
 // Get all the notifications in the database
 router.get("/", checkAuth, (req, res, next) => {
 	Notification.find()
-		.select("title status owner rentee assetID")
+		.select("title status owner rentee itemID itemType")
 		.exec()
 		.then((docs) => {
 			if (docs) {
@@ -50,7 +51,8 @@ router.get("/", checkAuth, (req, res, next) => {
 							status: doc.status,
 							owner: doc.owner,
 							rentee: doc.rentee,
-							assetID: doc.assetID,
+							itemID: doc.itemID,
+							itemType: doc.itemType,
 						};
 					}),
 				};
@@ -78,7 +80,8 @@ router.get("/notification/:notificationId", checkAuth, (req, res, next) => {
 					status: doc.status,
 					owner: doc.owner,
 					rentee: doc.rentee,
-					assetID: doc.assetID,
+					itemID: doc.itemID,
+					itemType: doc.itemType,
 				};
 				res.status(200).json(response);
 			} else {
@@ -94,7 +97,7 @@ router.get("/notification/:notificationId", checkAuth, (req, res, next) => {
 router.get("/user/", checkAuth, (req, res, next) => {
 	const username = req.userData.username;
 	Notification.find({ $or: [{ owner: username }, { rentee: username }] })
-		.select("title status owner rentee assetID")
+		.select("title status owner rentee itemID itemType")
 		.exec()
 		.then((docs) => {
 			if (docs) {
@@ -113,7 +116,7 @@ router.get("/user/alreadySent/:assetTitle", checkAuth, (req, res, next) => {
 	const username = req.userData.username;
 	const assetTitle = req.params.assetTitle;
 	Notification.find({ rentee: username, title: assetTitle })
-		.select("title status owner rentee assetID")
+		.select("title status owner rentee itemID")
 		.exec()
 		.then((docs) => {
 			if (docs.length >= 1) {

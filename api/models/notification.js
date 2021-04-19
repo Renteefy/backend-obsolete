@@ -6,7 +6,8 @@ const NotificationSchema = mongoose.Schema({
 	status: String,
 	owner: String,
 	rentee: String,
-	assetID: String,
+	itemID: String,
+	itemType: String,
 	date: { type: Date, default: Date.now },
 });
 
