@@ -12,8 +12,12 @@ const Invite = require("../models/invite");
 const Asset = require("../models/asset");
 const Service = require("../models/service");
 const Notification = require("../models/notification");
+const user = require("../models/user");
 
 router.post("/signup", (req, res, next) => {
+	if (req.body.email == null) {
+		return res.status(400).json({ message: "Email missing" });
+	}
 	User.find({ email: req.body.email })
 		.exec()
 		.then((user) => {
