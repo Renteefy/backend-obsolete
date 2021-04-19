@@ -12,7 +12,6 @@ const Invite = require("../models/invite");
 const Asset = require("../models/asset");
 const Service = require("../models/service");
 const Notification = require("../models/notification");
-const user = require("../models/user");
 
 router.post("/signup", (req, res, next) => {
 	if (req.body.email == null) {
@@ -111,8 +110,8 @@ router.post("/login", (req, res, next) => {
 		});
 });
 
-router.delete("/:username", (req, res, next) => {
-	User.remove({ username: req.params.username })
+router.delete("/user/:username", (req, res, next) => {
+	User.deleteOne({ email: req.params.email })
 		.exec()
 		.then((result) => {
 			res.status(200).json({
@@ -259,7 +258,8 @@ router.post("/sendInvite", checkAuth, (req, res, next) => {
 										.save()
 										.then((inviteDocs) => {
 											User.updateOne({ _id: userID }, { $inc: { invitesNum: -1 } }).exec();
-											res.status(200).json({ message: "Invite sent successfully" });
+											User.updateOne({ _id: userID }, { $push: { inviteList: { inviteeEmail: email, inviteID: inviteDocs._id } } }).exec();
+											res.status(200).json({ message: "Invite sent successfully", id: inviteDocs._id });
 										})
 										.catch((err) => {
 											console.log(err);
@@ -277,6 +277,43 @@ router.post("/sendInvite", checkAuth, (req, res, next) => {
 						}
 					});
 			}
+		})
+		.catch((err) => {
+			console.log(err);
+			res.status(500).json({
+				error: err,
+			});
+		});
+});
+
+router.get("/getInvites", checkAuth, (req, res, next) => {
+	const username = req.userData.username;
+	User.findOne({ username: username })
+		.select("inviteList")
+		.exec()
+		.then((docs) => {
+			res.status(200).json(docs);
+		})
+		.catch((err) => {
+			console.log(err);
+			res.status(500).json({
+				error: err,
+			});
+		});
+});
+
+router.delete("/deleteInvite", checkAuth, (req, res, next) => {
+	console.log("Ramu");
+	console.log(req.body);
+	User.deleteOne({ email: req.body.email })
+		.exec()
+		.then((result) => {
+			Invite.deleteOne({ _id: req.body.inviteID }).exec();
+			User.updateOne({ username: req.userData.username }, { $pull: { inviteList: { inviteeEmail: req.body.email } } }).exec();
+			User.updateOne({ username: req.userData.username }, { $inc: { invitesNum: 1 } }).exec();
+			res.status(200).json({
+				message: "User deleted",
+			});
 		})
 		.catch((err) => {
 			console.log(err);

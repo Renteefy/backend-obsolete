@@ -12,7 +12,7 @@ const userSchema = mongoose.Schema({
 	invitesNum: { type: Number, default: 3 },
 	inviteList: [
 		{
-			inviteeName: String,
+			inviteeEmail: String,
 			inviteID: String,
 		},
 	],
