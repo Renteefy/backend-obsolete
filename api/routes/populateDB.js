@@ -1,10 +1,14 @@
 const Asset = require("../models/asset");
 const Service = require("../models/service");
+const User = require("../models/user");
 const mongoose = require("mongoose");
 mongoose.connect("mongodb://localhost:27017/test", {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 });
+
+const tester1 = { email: "tester1@gmail.com" };
+const tester2 = { email: "tester2@gmail.com" };
 const iphone = {
 	_id: mongoose.Types.ObjectId(),
 	title: "iPhone",
@@ -123,7 +127,12 @@ const designing = {
 
 const assetArr = [iphone, macbook, bike, piano, headphones];
 const serviceArr = [coding, driver, driving, plumber, designing];
+const userArr = [tester1, tester2];
 async function popDb() {
+	userArr.map((item) => {
+		const user = new User(item);
+		user.save();
+	});
 	assetArr.map((item) => {
 		const asset = new Asset(item);
 		asset.save();
