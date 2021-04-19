@@ -9,6 +9,9 @@ const multer = require("multer");
 
 const User = require("../models/user");
 const Invite = require("../models/invite");
+const Asset = require("../models/asset");
+const Service = require("../models/service");
+const Notification = require("../models/notification");
 
 router.post("/signup", (req, res, next) => {
 	User.find({ email: req.body.email })
@@ -35,6 +38,7 @@ router.post("/signup", (req, res, next) => {
 				const user = new User({
 					_id: mongoose.Types.ObjectId(),
 					email: req.body.email,
+					username: req.body.email,
 					// password: hash,
 				});
 				user.save()
@@ -57,7 +61,7 @@ router.post("/signup", (req, res, next) => {
 
 router.post("/login", (req, res, next) => {
 	// sleep.sleep(5);
-	User.find({ username: req.body.username })
+	User.find({ email: req.body.email })
 		.exec()
 		.then((user) => {
 			if (user.length < 1) {
@@ -147,16 +151,53 @@ router.patch("/user", checkAuth, upload.fields([{ name: "UserImage", maxCount: 1
 		file_name = req.files["UserImage"][0].filename;
 		req.body.picture = file_name;
 	}
-	User.updateOne({ username: req.userData.username }, { $set: req.body })
-		.exec()
-		.then((result) => {
-			console.log(result);
-			res.status(200).json(result);
-		})
-		.catch((err) => {
-			console.log(err);
-			res.status(500).json({ error: err });
-		});
+	const oldUserName = req.userData.username;
+	const newUserName = req.body.username;
+
+	// to check if the user has changed username
+	if (oldUserName !== newUserName) {
+		User.find({ username: req.body.username })
+			.exec()
+			.then((user) => {
+				// if changed, then response 409, and say username already exists
+				if (user.length >= 1) {
+					console.log("Username taken");
+					return res.status(409).json({
+						message: "Username already exists",
+					});
+					// if not changed that means the user has picked a unique username and we have to change the field based on email id
+				} else {
+					User.updateOne({ email: req.userData.email }, { $set: req.body })
+						.exec()
+						.then((result) => {
+							// notifications to be updated
+							Asset.updateMany({ owner: oldUserName }, { $set: { owner: newUserName } }).exec();
+							Asset.updateMany({ "renter.renterUsername": oldUserName }, { $set: { "renter.renterUsername": newUserName } }).exec();
+							Service.updateMany({ owner: oldUserName }, { $set: { owner: newUserName } }).exec();
+							Service.updateMany({ "renter.renterUsername": oldUserName }, { $set: { "renter.renterUsername": newUserName } }).exec();
+							Notification.updateMany({ owner: oldUserName }, { $set: { owner: newUserName } }).exec();
+							Notification.updateMany({ rentee: oldUserName }, { $set: { rentee: newUserName } }).exec();
+							res.status(200).json(result);
+						})
+						.catch((err) => {
+							console.log(err);
+							res.status(500).json({ error: err });
+						});
+				}
+			});
+		// if username is not to be changed then just update based on username
+	} else {
+		User.updateOne({ username: req.userData.username }, { $set: req.body })
+			.exec()
+			.then((result) => {
+				console.log(result);
+				res.status(200).json(result);
+			})
+			.catch((err) => {
+				console.log(err);
+				res.status(500).json({ error: err });
+			});
+	}
 });
 
 router.get("/user", checkAuth, (req, res, next) => {
