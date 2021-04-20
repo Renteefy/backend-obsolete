@@ -11,8 +11,8 @@ const assetSchema = mongoose.Schema({
 	category: String,
 	renter: {
 		renterUsername: { type: String, default: null },
-		startDate: String,
-		endDate: String,
+		startDate: { type: String, default: null },
+		endDate: { type: String, default: null },
 	},
 	waitingList: [String],
 	date: { type: Date, default: Date.now },

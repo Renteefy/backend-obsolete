@@ -111,7 +111,7 @@ router.get("/getsome/:skip/:limit/", checkAuth, (req, res, next) => {
 	Asset.find()
 		.skip(skp)
 		.limit(lmt)
-		.select("title picture price interval date")
+		.select("title picture price interval date category")
 		.exec()
 		.then((docs) => {
 			if (docs) {
@@ -124,6 +124,7 @@ router.get("/getsome/:skip/:limit/", checkAuth, (req, res, next) => {
 							date: doc.date,
 							id: doc._id,
 							interval: doc.interval,
+							category: doc.category,
 							url: "/static/" + doc.picture,
 						};
 					}),
@@ -143,7 +144,7 @@ router.get("/asset/:assetId", checkAuth, (req, res, next) => {
 	const assetId = req.params.assetId;
 	const username = req.userData.username;
 	Asset.findById(assetId)
-		.select("title description price interval picture owner category")
+		.select("title description price interval picture owner category renter")
 		.exec()
 		.then((doc) => {
 			if (doc) {
@@ -155,6 +156,7 @@ router.get("/asset/:assetId", checkAuth, (req, res, next) => {
 					category: doc.category,
 					description: doc.description,
 					owner: doc.owner,
+					renter: doc.renter.renterUsername,
 					url: "/static/" + doc.picture,
 				};
 				let alreadySentQuery = findAlreadySent(username, assetResponse.title);

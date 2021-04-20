@@ -161,11 +161,9 @@ router.patch("/notification/:notificationId", checkAuth, (req, res, next) => {
 	for (const ops of req.body.changes) {
 		updateOps[ops.propName] = ops.value;
 	}
-	console.log(updateOps);
 	Notification.updateOne({ _id: id }, { $set: updateOps })
 		.exec()
 		.then((result) => {
-			console.log(result);
 			res.status(200).json(result);
 		})
 		.catch((err) => {
