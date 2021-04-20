@@ -278,7 +278,7 @@ router.patch("/asset/renter/:assetID", checkAuth, (req, res, next) => {
 
 // This route searches the notification collection to find if there exits a notifications sent for the given asset
 function findAlreadySent(username, assetTitle) {
-	let query = Notification.findOne({ rentee: username, title: assetTitle }).select("title status rentee assetID owner");
+	let query = Notification.findOne({ rentee: username, title: assetTitle }).select("title status rentee assetID owner date");
 	return query;
 }
 
