@@ -249,7 +249,7 @@ router.post("/sendInvite", checkAuth, (req, res, next) => {
 								message: "Email already exists",
 							});
 						} else {
-							const newUser = new User({ _id: mongoose.Types.ObjectId(), email: email });
+							const newUser = new User({ _id: mongoose.Types.ObjectId(), email: email, username: email });
 							newUser
 								.save()
 								.then((userDocs) => {
