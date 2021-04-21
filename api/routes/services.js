@@ -112,7 +112,7 @@ router.get("/getsome/:skip/:limit/", checkAuth, (req, res, next) => {
 	Service.find()
 		.skip(skp)
 		.limit(lmt)
-		.select("title picture price interval date")
+		.select("title picture price interval date category")
 		.exec()
 		.then((docs) => {
 			if (docs) {
@@ -125,6 +125,7 @@ router.get("/getsome/:skip/:limit/", checkAuth, (req, res, next) => {
 							date: doc.date,
 							id: doc._id,
 							interval: doc.interval,
+							category: doc.category,
 							url: "/static/" + doc.picture,
 						};
 					}),
@@ -158,7 +159,7 @@ router.get("/service/:serviceId", checkAuth, (req, res, next) => {
 					owner: doc.owner,
 					url: "/static/" + doc.picture,
 				};
-				let alreadySentQuery = findAlreadySent(username, serviceResponse.title);
+				let alreadySentQuery = findAlreadySent(username, serviceResponse.id);
 				alreadySentQuery.exec((err, doc) => {
 					if (err) return err;
 					else res.status(200).json({ itemResponse: serviceResponse, notifiResponse: doc });
@@ -276,8 +277,8 @@ router.patch("/service/renter/:serviceID", checkAuth, (req, res, next) => {
 });
 
 // This route searches the notification collection to find if there exits a notifications sent for the given service
-function findAlreadySent(username, serviceTitle) {
-	let query = Notification.findOne({ rentee: username, title: serviceTitle }).select("title status rentee serviceID owner date");
+function findAlreadySent(username, serviceid) {
+	let query = Notification.findOne({ rentee: username, _id: serviceid }).select("title status rentee serviceID owner date");
 	return query;
 }
 
