@@ -266,7 +266,7 @@ async function sendMail(email) {
     to: email,
     subject: "Hello from renteefy",
     html:
-      "Dear Ayush, <br> pls giv us little bit email template fastly.<br> we are in desparate need.<br> Regards, Renteefy. aka next hippopotamus because unicorns do not exist and we find it extremely silly. unicorns LMAO. <br> also join the kanban board http://bit.ly/renteefycompany <br> full love with wet kisses k bye",
+      "Dear Ayush, <br> You are invited to use renteefy <br> pls giv us little bit email template fastly.<br> we are in desparate need.<br> Regards, Renteefy. aka next hippopotamus because unicorns do not exist and we find it extremely silly. unicorns LMAO. <br> also join the kanban board http://bit.ly/renteefycompany <br> full love with wet kisses k bye",
   };
   transporter.sendMail(mailOptions, function (error, response) {
     if (error) {
