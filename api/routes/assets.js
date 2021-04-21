@@ -159,7 +159,7 @@ router.get("/asset/:assetId", checkAuth, (req, res, next) => {
 					renter: doc.renter.renterUsername,
 					url: "/static/" + doc.picture,
 				};
-				let alreadySentQuery = findAlreadySent(username, assetResponse.title);
+				let alreadySentQuery = findAlreadySent(username, assetResponse.id);
 				alreadySentQuery.exec((err, doc) => {
 					if (err) return err;
 					else res.status(200).json({ itemResponse: assetResponse, notifiResponse: doc });
@@ -277,8 +277,8 @@ router.patch("/asset/renter/:assetID", checkAuth, (req, res, next) => {
 });
 
 // This route searches the notification collection to find if there exits a notifications sent for the given asset
-function findAlreadySent(username, assetTitle) {
-	let query = Notification.findOne({ rentee: username, title: assetTitle }).select("title status rentee assetID owner date");
+function findAlreadySent(username, assetid) {
+	let query = Notification.findOne({ rentee: username, _id: assetid }).select("title status rentee assetID owner date");
 	return query;
 }
 
