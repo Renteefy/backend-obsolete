@@ -192,21 +192,57 @@ router.delete("/notification/:notificationId", checkAuth, (req, res, next) => {
 //         }
 //     ]
 // }
-router.patch("/notification/:notificationId", checkAuth, (req, res, next) => {
-  const id = req.params.notificationId;
-  const updateOps = {};
-  for (const ops of req.body.changes) {
-    updateOps[ops.propName] = ops.value;
+router.patch(
+  "/notification/:notificationId",
+  checkAuth,
+  async (req, res, next) => {
+    const id = req.params.notificationId;
+    const updateOps = {};
+    console.log(req.body);
+    const user = await getUserObjfromUsername(req.body.renteeUsername);
+    //console.log(user);
+    const token = await firestore.collection("users").doc(user.email).get();
+    //console.log(token.data().token);
+    const notification_options = {
+      priority: "high",
+      timeToLive: 60 * 60 * 24,
+    };
+    const message = {
+      notification: {
+        title: "We have a request for you! 🔔",
+        body:
+          req.userData.username +
+          " has " +
+          req.body.changes[0].value +
+          " your request.",
+      },
+    };
+    const options = notification_options;
+    for (const ops of req.body.changes) {
+      updateOps[ops.propName] = ops.value;
+    }
+
+    Notification.updateOne({ _id: id }, { $set: updateOps })
+      .exec()
+      .then((result) => {
+        admin
+          .messaging()
+          .sendToDevice(token.data().token, message, options)
+          .then((response) => {
+            res.status(200).json(result);
+          })
+          .catch((error) => {
+            console.log(error);
+            res.status(500).json({
+              error: err,
+            });
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json({ error: err });
+      });
   }
-  Notification.updateOne({ _id: id }, { $set: updateOps })
-    .exec()
-    .then((result) => {
-      res.status(200).json(result);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({ error: err });
-    });
-});
+);
 
 module.exports = router;
