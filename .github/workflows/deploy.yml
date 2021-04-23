@@ -18,4 +18,5 @@ jobs:
           cd backend
           git checkout 0.0
           git pull
+          npm install
           pm2 restart backendServer
