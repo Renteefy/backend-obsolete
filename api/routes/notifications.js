@@ -244,5 +244,22 @@ router.patch(
       });
   }
 );
+//get the count of notification for the logged in user
+router.post("/user/count", checkAuth, (req, res, next) => {
+  const username = req.userData.username;
+  Notification.find({ $or: [{ owner: username }, { rentee: username }] })
+    .select("title status owner rentee itemID itemType")
+    .exec()
+    .then((docs) => {
+      if (docs) {
+        res.status(200).json(docs.length);
+      } else {
+        res.status(404).json({ message: "No Valid Entry Found" });
+      }
+    })
+    .catch((err) => {
+      console.log(err), res.status(500).json({ error: err });
+    });
+});
 
 module.exports = router;
