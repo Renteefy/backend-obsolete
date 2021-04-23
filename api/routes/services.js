@@ -278,7 +278,7 @@ router.patch("/service/renter/:serviceID", checkAuth, (req, res, next) => {
 
 // This route searches the notification collection to find if there exits a notifications sent for the given service
 function findAlreadySent(username, serviceid) {
-	let query = Notification.findOne({ rentee: username, _id: serviceid }).select("title status rentee serviceID owner date");
+	let query = Notification.findOne({ rentee: username, itemID: serviceid }).select("title status rentee serviceID owner date");
 	return query;
 }
 
