@@ -14,6 +14,13 @@ const Asset = require("../models/asset");
 const Service = require("../models/service");
 const Notification = require("../models/notification");
 
+let otpAndEmail = {};
+
+//helper
+function randomRange(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 router.post("/signup", (req, res, next) => {
   if (req.body.email == null) {
     return res.status(400).json({ message: "Email missing" });
@@ -64,8 +71,31 @@ router.post("/signup", (req, res, next) => {
     });
 });
 
+router.post("/checkOTP", (req, res, next) => {
+  try {
+    if (otpAndEmail[req.body.email] == req.body.otp)
+      res.json({ isVerified: true });
+    else res.status(500).json({ isVerified: false });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ isVerified: false });
+  }
+});
+
 router.post("/login", (req, res, next) => {
-  // sleep.sleep(5);
+  //generate otp
+  const email = req.body.email;
+  let otp = randomRange(10000, 99999);
+  let mailOptions = {
+    from: "renteefy.company@gmail.com",
+    to: email,
+    subject: "Hello from renteefy",
+    html: `Dear ${email} , OTP is ${otp}  full love with wet kisses k bye.`,
+  };
+  otpAndEmail[email] = otp;
+  sendMail(mailOptions);
+
+  //login main logic
   User.find({ email: req.body.email })
     .exec()
     .then((user) => {
@@ -253,7 +283,7 @@ router.get("/user", checkAuth, (req, res, next) => {
     });
 });
 
-async function sendMail(email) {
+async function sendMail(mailOptions) {
   let transporter = nodemailer.createTransport({
     service: "Gmail",
     auth: {
@@ -261,12 +291,7 @@ async function sendMail(email) {
       pass: process.env.PASSWORD,
     },
   });
-  var mailOptions = {
-    from: "renteefy.company@gmail.com",
-    to: email,
-    subject: "Hello from renteefy",
-    html: `Dear ${email} , <br> You are invited to use renteefy <br> pls give us little bit email template fastly.<br> we are in desparate need.<br> Regards, Renteefy. aka next hippopotamus because unicorns do not exist and we find it extremely silly. unicorns LMAO. <br> full love with wet kisses k bye.`,
-  };
+
   transporter.sendMail(mailOptions, function (error, response) {
     if (error) {
       console.log(error);
@@ -288,7 +313,13 @@ router.post("/sendInvite", checkAuth, (req, res, next) => {
         return res.status(404).json({ message: "Out of invites" });
       } else {
         const email = req.body.email;
-        sendMail(email);
+        var mailOptions = {
+          from: "renteefy.company@gmail.com",
+          to: email,
+          subject: "Hello from renteefy",
+          html: `Dear ${email} , <br> You are invited to use renteefy <br> pls give us little bit email template fastly.<br> we are in desparate need.<br> Regards, Renteefy. aka next hippopotamus because unicorns do not exist and we find it extremely silly. unicorns LMAO. <br> full love with wet kisses k bye.`,
+        };
+        sendMail(mailOptions);
         User.find({ email: email })
           .exec()
           .then((user) => {
