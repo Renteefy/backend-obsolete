@@ -11,8 +11,8 @@ const serviceRoute = require("./api/routes/services");
 const notificationRoute = require("./api/routes/notifications");
 
 mongoose.connect("mongodb://localhost:27017", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+	useNewUrlParser: true,
+	useUnifiedTopology: true,
 });
 
 app.use(morgan("dev"));
@@ -28,13 +28,13 @@ app.use("/notifications", notificationRoute);
 
 // test route -  to check the if server is working
 app.get("/test", (req, res) => {
-  res.send({
-    message: "The server is on. just like your mom when she sees me 💦",
-  });
+	res.send({
+		message: "The server is on. just like your mom when she sees me 💦",
+	});
 });
 
 app.use((req, res, next) => {
-  res.sendStatus(404);
+	res.sendStatus(404);
 });
 
 module.exports = app;
