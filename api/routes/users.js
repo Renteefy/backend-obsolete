@@ -83,7 +83,7 @@ router.post("/checkOTP", (req, res, next) => {
 router.post("/login", (req, res, next) => {
 	//generate otp
 	const email = req.body.email;
-	let otp = randomRange(10000, 99999);
+	let otp = randomRange(100000, 999999);
 	let mailOptions = {
 		from: "renteefy.company@gmail.com",
 		to: email,
