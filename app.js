@@ -10,7 +10,7 @@ const assetRoute = require("./api/routes/assets");
 const serviceRoute = require("./api/routes/services");
 const notificationRoute = require("./api/routes/notifications");
 
-mongoose.connect("mongodb://localhost:27017", {
+mongoose.connect(`mongodb://localhost:27017/${process.env.DBNAME}`, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
