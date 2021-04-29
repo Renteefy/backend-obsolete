@@ -83,6 +83,7 @@ router.post("/checkOTP", (req, res, next) => {
 });
 
 router.post("/login", (req, res, next) => {
+  console.log(process.env.DBNAME);
   //generate otp
   const email = req.body.email;
   let otp = randomRange(100000, 999999);
@@ -93,7 +94,6 @@ router.post("/login", (req, res, next) => {
     html: `Dear ${email} , OTP is ${otp}  full love with wet kisses k bye.`,
   };
   otpAndEmail[email] = otp;
-  sendMail(mailOptions);
 
   //login main logic
   User.find({ email: req.body.email })
@@ -111,6 +111,7 @@ router.post("/login", (req, res, next) => {
         // 		});
         // 	}
         // 	if (result) {
+        //sendMail(mailOptions);
         const token = jwt.sign(
           {
             username: user[0].username,
