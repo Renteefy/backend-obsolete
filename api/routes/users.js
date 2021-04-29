@@ -111,7 +111,7 @@ router.post("/login", (req, res, next) => {
         // 		});
         // 	}
         // 	if (result) {
-        //sendMail(mailOptions);
+        sendMail(mailOptions);
         const token = jwt.sign(
           {
             username: user[0].username,
