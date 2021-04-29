@@ -3,7 +3,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-var sleep = require("sleep");
+const sleep = require("sleep");
 const checkAuth = require("../middleware/check-auth");
 const multer = require("multer");
 const nodemailer = require("nodemailer");
@@ -284,7 +284,7 @@ router.get("/user", checkAuth, (req, res, next) => {
 });
 
 async function sendMail(mailOptions) {
-  sleep(randomRange(5, 30));
+  //sleep(randomRange(5, 30));
   let transporter = nodemailer.createTransport({
     service: "Gmail",
     auth: {
