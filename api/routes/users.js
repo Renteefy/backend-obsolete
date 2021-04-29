@@ -288,7 +288,7 @@ async function sendMail(mailOptions) {
   let transporter = nodemailer.createTransport({
     service: "Gmail",
     auth: {
-      user: process.env.SMTPUSERNAME,
+      user: process.env.USERNAME,
       pass: process.env.PASSWORD,
     },
   });
