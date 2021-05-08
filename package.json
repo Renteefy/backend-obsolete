@@ -10,7 +10,8 @@
 		"prod": "NODE_ENV=prod  DBNAME=prod nodemon server.js",
 		"popDB": "node api/routes/populateDB.js",
 		"fillUser-dev": "NODE_ENV=dev  node mocks/filluser.js",
-		"fillUser-prod": "NODE_ENV=prod  node mocks/filluser.js"
+		"fillUser-prod": "NODE_ENV=prod  node mocks/filluser.js",
+		"addOne-prod": "NODE_ENV=prod  node mocks/addOneUser.js"
 	},
 	"repository": {
 		"type": "git",
