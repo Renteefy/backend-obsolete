@@ -1,0 +1,9 @@
+{
+	"env": {
+		"MONGO_PW": "3",
+		"URL": "https://api.renteefy.ga",
+		"PASS": "ramukaka",
+		"USERNAME": "renteefy.company@gmail.com",
+		"PASSWORD": "renteefy123"
+	}
+}

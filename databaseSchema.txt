@@ -1,0 +1,23 @@
+** user ** 
+- username: String
+- password: String
+- date: (stores the current date and time)
+
+** asset **
+- name: String; name of the asset
+- username: String; username of the logged in user; Not required from frontend
+- picture: String, stores the filepath of the picture; Not required from frontend
+- description: String
+- rate: String
+- category: String
+- date: (stores the current date and time)
+
+** service **
+- name: String; name of the asset
+- username: String; username of the logged in user; Not required from frontend
+- picture: String, stores the filepath of the picture; Not required from frontend
+- description: String
+- rate: String
+- category: String
+- duration: String
+- date: (stores the current date and time)

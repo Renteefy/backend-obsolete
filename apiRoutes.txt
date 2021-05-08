@@ -1,0 +1,176 @@
+** test **
+- url/text -> returns ""The server is on. just like your mom when she sees me 💦" on success
+
+** users **
+- url/users/signup => (POST)
+        {
+            username: val,
+            password: val
+        }
+    201 -> success
+        {
+            message: "User Created"
+        }
+    409 -> Failure
+        {
+            message: "user already exists"
+        }
+
+- url/users/login => (POST)
+        {
+            username: val,
+            password: val
+        }
+    200 -> success
+        {
+            message: "Auth successful",
+            token: token,
+        }
+    401 -> Failure
+        {
+            message: "Auth failed",
+        }
+
+- url/users/:username => (DELETE)
+    200 -> success
+        {
+            message: "User deleted"
+        }
+
+
+** assets ** 
+Note: Auth reequired on every route
+- url/assets/ => (GET) 
+    200 -> success
+        Return a list of all the assets in the database
+        {
+            _id: val,
+            name: val,
+            username: val,
+            picture: val, (file path, will static link here)
+            description: val,
+            rate: val,
+            category: val
+        }
+    404 -> Failure
+        {
+            message: "No Valid Entry Found"
+        }
+
+- url/assets/ => (POST)
+    Requires image, send data as multipart form data
+    {
+        AssetImage: Image,
+        name: val,
+        description: val,
+        rate: val,
+        category: val,
+    }
+    200 -> success
+        {
+            message: "POST in asset",
+            id: assetid,
+        }
+
+- url/assets//asset/:assetId => (GET)
+    Get the asset with asset ID
+    200 -> success
+        {
+            _id: val,
+            name: val,
+            username: val,
+            picture: val, (file path, will static link here)
+            description: val,
+            rate: val,
+            category: val
+        }
+    404 -> Failure
+        {
+            message: "No Valid Entry Found"
+        }
+    
+- url/assets/user/:username => (GET)
+    Get all the assets posted by a particular user
+    @dj should the username here default to the logged in person ka username?
+    200 -> success
+        {
+            _id: val,
+            name: val,
+            username: val,
+            picture: val, (file path, will static link here)
+            description: val,
+            rate: val,
+            category: val
+        }
+    404 -> Failure
+        {
+            message: "No Valid Entry Found"
+        }
+
+- url/assets/asset/:assetId => (DELETE)
+    // Delete the asset whose assetId is given
+    200 => success
+        {
+            message: "Asset deleted",
+        }
+
+
+** services ** 
+Requires image, send data as multipart form data
+    {
+        serviceImage: Image,
+        name: val,
+        description: val,
+        rate: val,
+        category: val,
+        duration: val,
+    }
+    200 -> success
+        {
+            message: "POST in service",
+            id: serviceid,
+        }
+
+- url/services/service/:serviceId => (GET)
+    Get the service with service ID
+    200 -> success
+        {
+            _id: val,
+            name: val,
+            username: val,
+            picture: val, (file path, will static link here)
+            description: val,
+            rate: val,
+            category: val,
+            duration: val
+        }
+    404 -> Failure
+        {
+            message: "No Valid Entry Found"
+        }
+    
+- url/services/user/:username => (GET)
+    Get all the services posted by a particular user
+    @dj should the username here default to the logged in person ka username?
+    200 -> success
+        {
+            _id: val,
+            name: val,
+            username: val,
+            picture: val, (file path, will static link here)
+            description: val,
+            rate: val,
+            category: val,
+            duration: val
+        }
+    404 -> Failure
+        {
+            message: "No Valid Entry Found"
+        }
+
+- url/services/service/:serviceId => (DELETE)
+    // Delete the service whose serviceId is given
+    200 => success
+        {
+            message: "service deleted",
+        }
