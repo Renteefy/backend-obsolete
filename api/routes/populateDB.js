@@ -11,11 +11,15 @@ const tester1 = {
   _id: mongoose.Types.ObjectId(),
   email: "yajat472001@gmail.com",
   username: "tester1",
+  firstName: "Yajat", 
+  lastName: "Vishwakk"
 };
 const tester2 = {
   _id: mongoose.Types.ObjectId(),
   email: "hrishikeshmm01@gmail.com",
   username: "tester2",
+  firstName: "Hrishikesh", 
+  lastName: "Mulkutkar"
 };
 const iphone = {
   _id: mongoose.Types.ObjectId(),
